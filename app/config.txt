@@ -1,0 +1,7 @@
+#db parameters , este archivo debe renombrar con la extencion .py
+_db_user = 'root'
+_db_pass = ''
+_db_host = 'localhost'
+_db_name = 'carritodb'
+_os_path = 'c:windows'
+

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+</head>
+<body>
+    <h1 class="text-center">Carrito de compras</h1>
+    <div class="content">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="d-flex">
+                        <h5>Productos</h5>
+                        <form action="{{ url_for('carrito_router.buscar') }}" class="text-center" method="post">
+                          <input type="text" name="buscar">
+                          <button>Buscar</button>
+                        </form>
+                        
+                    </div>
+                    
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Código</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Opciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for data in producto %}
+                          <tr>
+                            <th scope="row">{{data.codigo}}</th>
+                            <td>{{data.descripcion}}</td>
+                            <td>{{data.precio}}</td>
+                            <td>
+                              <input type="number" name="cantidad" id="cantidad{{data.id}}">
+                            </td>
+                            <td>
+                              <button onclick="agregarCarrito('{{data.id}}')">Agregar al carrito</button>
+                            </td>
+                          </tr>
+                          {% endfor %}
+                          
+                        </tbody>
+                      </table>
+                </div>
+                <div class="col-md-5">
+                    <table class="table">
+                        <thead>
+                          
+                          <tr>
+                            <th scope="col">Cant.</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Total</th>
+                            <th></th>
+                          </tr>
+                          
+                        </thead>
+                        <tbody>
+                          {% for data in carrito %}
+                          <tr>
+                            <th scope="row">{{data.cantidad}}</th>
+                            <td>{{data.producto.descripcion}}</td>
+                            <td>{{data.producto.precio}}</td>
+                            <td>{{data.producto.precio*data.cantidad}}</td>
+                            <td><a class="btn btn-danger btn-sm" href="{{url_for('carrito_router.retirar',id=data.id)}}" onclick="confirm('¿Desea retirar de carrito?')"> Retirar</a></td>
+                          </tr>
+                          {% endfor %}
+                          
+                        </tbody>
+                      </table>
+                      <div class="top-0 end-0 p-3">
+                        Total: {{total}}
+                        <br>
+                        <button class="btn btn-outline-success">Comprar</button>
+                      </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+<script>
+  function agregarCarrito(id){
+    cantidad = $('#cantidad'+id).val();
+    if(cantidad!=''){
+      $.ajax({
+          url: '/agregar',
+          type: 'POST',
+          data: {
+            'id': id,
+            'cantidad': cantidad
+          },
+          success: function (data) {
+            window.location.reload(true);
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            $.alert('error');
+          }
+        });
+    }
+    else{
+      alert("Ingrese la cantidad");
+    }
+    
+  }
+</script>
+</body>
+</html>
